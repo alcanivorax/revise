@@ -1,0 +1,58 @@
+{
+  "name": "@alcanivorax/revise",
+  "version": "0.1.0",
+  "description": "A minimal CLI to track what you learned and remind you to revise it on fixed spaced-repetition days",
+  "type": "module",
+  "bin": {
+    "revise": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "clean": "rimraf dist",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepublishOnly": "npm run build",
+    "postbuild": "chmod +x dist/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alcanivorax/revise.git"
+  },
+  "keywords": [
+    "cli",
+    "revision",
+    "spaced-repetition",
+    "learning",
+    "productivity",
+    "developer-tools",
+    "terminal",
+    "study"
+  ],
+  "author": "alcanivorax",
+  "license": "MIT",
+  "packageManager": "pnpm@10.28.0",
+  "devDependencies": {
+    "@types/node": "^25.0.9",
+    "@typescript-eslint/eslint-plugin": "^8.53.1",
+    "@typescript-eslint/parser": "^8.53.1",
+    "eslint": "^9.39.2",
+    "prettier": "^3.8.1",
+    "rimraf": "^6.1.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  }
+}
