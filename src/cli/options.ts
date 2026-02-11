@@ -1,5 +1,7 @@
 import { args } from './args.js'
 import pkg from '../../package.json' with { type: 'json' }
+import { addCommand } from './add.js'
+import { todayCommand } from './today.js'
 
 function printHelp(): void {
   console.log(`
@@ -19,6 +21,7 @@ function printVersion(): void {
 ${pkg.name} version ${pkg.version}
 `)
 }
+
 function printInvalidOptions(option: string): void {
   console.error(`
 unknown option: ${option}
@@ -26,9 +29,22 @@ usage: ${pkg.name} [-v | --version] [-h | --help]
 `)
 }
 
-export function handleCliOptions(): void {
+export async function handleCliOptions(): Promise<void> {
   if (args.length === 0) return
 
+  if (args.includes('add') || args.includes('-add') || args.includes('--add')) {
+    await addCommand()
+    process.exit(0)
+  }
+
+  if (
+    args.includes('today') ||
+    args.includes('-today') ||
+    args.includes('--today')
+  ) {
+    todayCommand()
+    process.exit(0)
+  }
   if (args.includes('-h') || args.includes('--help') || args.includes('help')) {
     printHelp()
     process.exit(0)
