@@ -1,14 +1,14 @@
-import { args } from './args.js'
+import { args, index } from './args.js'
 import pkg from '../../package.json' with { type: 'json' }
 import { addCommand } from './add.js'
-import { todayCommand } from './today.js'
+import { doneCommand } from './done.js'
 
 function printHelp(): void {
   console.log(`
-${pkg.name} - a cli tool
+revise - a cli tool
 
 Usage:
-  ${pkg.name} [options]
+  revise [options]
 
 Options:
   -h, --help              Show help
@@ -18,14 +18,14 @@ Options:
 
 function printVersion(): void {
   console.log(`
-${pkg.name} version ${pkg.version}
+revise version ${pkg.version}
 `)
 }
 
 function printInvalidOptions(option: string): void {
   console.error(`
 unknown option: ${option}
-usage: ${pkg.name} [-v | --version] [-h | --help]
+usage: revise [-v | --version] [-h | --help]
 `)
 }
 
@@ -38,13 +38,13 @@ export async function handleCliOptions(): Promise<void> {
   }
 
   if (
-    args.includes('today') ||
-    args.includes('-today') ||
-    args.includes('--today')
+    args.includes('done') ||
+    args.includes('-done') ||
+    args.includes('--done')
   ) {
-    todayCommand()
-    process.exit(0)
+    doneCommand(index)
   }
+
   if (args.includes('-h') || args.includes('--help') || args.includes('help')) {
     printHelp()
     process.exit(0)
