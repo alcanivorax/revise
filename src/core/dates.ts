@@ -12,3 +12,10 @@ export function addDaysISO(base: string, days: number): string {
 export function isDue(date: string, today: string): boolean {
   return date <= today
 }
+
+export function daysBetween(from: string, to: string): number {
+  const a = new Date(from)
+  const b = new Date(to)
+  const diff = b.getTime() - a.getTime()
+  return Math.floor(diff / (1000 * 60 * 60 * 24))
+}

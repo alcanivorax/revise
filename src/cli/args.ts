@@ -1,2 +1,2 @@
 export const args = process.argv.splice(2)
-export const index = Number(process.argv[3])
+export const index = Number(args[1])

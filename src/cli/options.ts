@@ -2,10 +2,11 @@ import { args, index } from './args.js'
 import pkg from '../../package.json' with { type: 'json' }
 import { addCommand } from './add.js'
 import { doneCommand } from './done.js'
+import { todayCommand } from './today.js'
 
 function printHelp(): void {
   console.log(`
-revise - a cli tool
+revise - A CLI to Track what you learned and revise it on fixed spaced-repetition days
 
 Usage:
   revise [options]
@@ -30,7 +31,10 @@ usage: revise [-v | --version] [-h | --help]
 }
 
 export async function handleCliOptions(): Promise<void> {
-  if (args.length === 0) return
+  if (args.length === 0) {
+    todayCommand()
+    process.exit(0)
+  }
 
   if (args.includes('add') || args.includes('-add') || args.includes('--add')) {
     await addCommand()
@@ -43,6 +47,7 @@ export async function handleCliOptions(): Promise<void> {
     args.includes('--done')
   ) {
     doneCommand(index)
+    process.exit(0)
   }
 
   if (args.includes('-h') || args.includes('--help') || args.includes('help')) {

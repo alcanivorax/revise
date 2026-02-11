@@ -1,5 +1,6 @@
 import { todayISO, isDue } from '../core/dates.js'
 import { loadStore, saveStore } from '../core/storage.js'
+import { style } from '../core/style.js'
 
 export function doneCommand(index: number): void {
   const store = loadStore()
@@ -22,9 +23,10 @@ export function doneCommand(index: number): void {
   }
 
   if (index < 1 || index > due.length) {
-    console.log('❌ Invalid revision number')
+    console.log('❌ Invalid revision number.')
     return
   }
+
   const selected = due[index - 1]
 
   // Mark revision as done
@@ -39,9 +41,11 @@ export function doneCommand(index: number): void {
   saveStore(store)
 
   console.log(
-    `✅ Marked "${selected.topic.title}" — Day ${selected.revision.day} as done`
+    style.success(
+      `✅ Marked "${selected.topic.title}" — Day ${selected.revision.day} as done`
+    )
   )
   if (selected.topic.completed) {
-    console.log('🎉 Topic fully revised. Respect.')
+    console.log(style.header('🎉 Topic fully revised. Respect.'))
   }
 }
