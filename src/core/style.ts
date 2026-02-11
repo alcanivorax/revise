@@ -5,6 +5,6 @@ export const style = {
   topic: chalk.white,
   dueToday: chalk.yellow,
   overdue: chalk.red,
-  success: chalk.green,
+  success: chalk.cyan,
   muted: chalk.gray,
 }

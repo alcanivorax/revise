@@ -2,6 +2,7 @@ import prompts from 'prompts'
 import { todayISO } from '../core/dates.js'
 import { createSchedule } from '../core/scheduler.js'
 import { loadStore, saveStore } from '../core/storage.js'
+import { style } from '../core/style.js'
 
 export async function addCommand() {
   const store = loadStore()
@@ -39,5 +40,5 @@ export async function addCommand() {
   }
 
   saveStore(store)
-  console.log('✅ Topics saved. Future-you will thank you.')
+  console.log(style.success('✅ Topics saved.'))
 }
