@@ -9,11 +9,16 @@ function printHelp(): void {
 revise - A CLI to Track what you learned and revise it on fixed spaced-repetition days
 
 Usage:
-  revise [options]
+  revise [command]
+
+Commands:
+  add                 Add topics learned today
+  done <number>       Mark a revision as completed
 
 Options:
-  -h, --help              Show help
-  -v, --version           Show version
+  -h, --help          Show help
+  -v, --version       Show version
+
 `)
 }
 
@@ -25,8 +30,10 @@ revise version ${pkg.version}
 
 function printInvalidOptions(option: string): void {
   console.error(`
-unknown option: ${option}
-usage: revise [-v | --version] [-h | --help]
+error: unknown command "${option}"
+
+Run "revise --help" for usage.
+
 `)
 }
 
@@ -36,16 +43,12 @@ export async function handleCliOptions(): Promise<void> {
     process.exit(0)
   }
 
-  if (args.includes('add') || args.includes('-add') || args.includes('--add')) {
+  if (args.includes('add')) {
     await addCommand()
     process.exit(0)
   }
 
-  if (
-    args.includes('done') ||
-    args.includes('-done') ||
-    args.includes('--done')
-  ) {
+  if (args.includes('done')) {
     doneCommand(index)
     process.exit(0)
   }

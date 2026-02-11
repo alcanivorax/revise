@@ -18,12 +18,12 @@ export function doneCommand(index: number): void {
   }
 
   if (!due.length) {
-    console.log('❌ No revisions due today.')
+    console.log(style.muted('❌ No revisions due today.'))
     return
   }
 
   if (index < 1 || index > due.length) {
-    console.log('❌ Invalid revision number.')
+    console.log(style.muted('❌ Invalid revision number.'))
     return
   }
 
