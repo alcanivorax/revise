@@ -17,27 +17,28 @@ export function todayCommand(): void {
     }
   }
 
+  console.log()
+  console.log(style.header('revision') + style.dim(' · ') + style.muted(today))
+  console.log(style.dim('─'.repeat(40)))
+  console.log()
+
   if (!due.length) {
-    console.log(style.success('✅ Nothing to revise today. Go build.'))
+    console.log(style.success('✓') + style.dim(' nothing due today'))
     return
   }
 
-  console.log(style.header(`📌 Revisions due — ${today}\n`))
   due.forEach((d, i) => {
-    const title = style.topic(d.topic.title)
+    const idx = style.index(`${i + 1}`.padStart(2, ' '))
+    const title = style.title(d.topic.title)
     if (d.revision.date === today) {
-      console.log(
-        `[${i + 1}] ${title} — ${style.dueToday(
-          `Day ${d.revision.day} (due today)`
-        )}`
-      )
+      const badge = style.dueToday('due')
+      console.log(`  ${idx}  ${title}  ${style.dim('·')}  ${badge}`)
     } else {
       const overdueBy = daysBetween(d.revision.date, today)
-      console.log(
-        `[${i + 1}] ${title} — ${style.overdue(
-          `Day ${d.revision.day} (overdue by ${overdueBy} day${overdueBy > 1 ? 's' : ''})`
-        )}`
-      )
+      const badge = style.overdue(`overdue ${overdueBy}d`)
+      console.log(`  ${idx}  ${title}  ${style.dim('·')}  ${badge}`)
     }
   })
+
+  console.log()
 }

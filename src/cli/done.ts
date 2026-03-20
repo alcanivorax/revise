@@ -17,22 +17,24 @@ export function doneCommand(index: number): void {
     }
   }
 
+  console.log()
+  console.log(style.header('done') + style.dim(' · ') + style.muted(today))
+  console.log(style.dim('─'.repeat(40)))
+  console.log()
+
   if (!due.length) {
-    console.log(style.muted('❌ No revisions due today.'))
+    console.log(style.muted('no revisions due today'))
     return
   }
 
   if (index < 1 || index > due.length) {
-    console.log(style.muted('❌ Invalid revision number.'))
+    console.log(style.overdue(`invalid index (1-${due.length})`))
     return
   }
 
   const selected = due[index - 1]
-
-  // Mark revision as done
   selected.revision.done = true
 
-  // Check if topic is completed
   const remaining = selected.topic.schedule.some((r) => !r.done)
   if (!remaining) {
     selected.topic.completed = true
@@ -41,11 +43,14 @@ export function doneCommand(index: number): void {
   saveStore(store)
 
   console.log(
-    style.success(
-      `✅ Marked "${selected.topic.title}" — Day ${selected.revision.day} as done`
-    )
+    style.success(`✓ marked`) +
+      ` ${selected.topic.title} ` +
+      style.dim(`day ${selected.revision.day}`)
   )
+  console.log()
+
   if (selected.topic.completed) {
-    console.log(style.header('🎉 Topic fully revised. Respect.'))
+    console.log(style.header('✓ topic complete — well done'))
+    console.log()
   }
 }

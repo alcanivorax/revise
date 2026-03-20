@@ -8,38 +8,36 @@ export async function addCommand(): Promise<void> {
   const store = loadStore()
   const today = todayISO()
 
+  console.log()
+  console.log(style.header('add') + style.dim(' · ') + style.muted(today))
+  console.log(style.dim('─'.repeat(40)))
+  console.log()
+
   const response = await prompts({
-    type: 'list',
+    type: 'text',
     name: 'topics',
-    message: 'What did you learn today?',
-    separator: ',',
+    message: style.muted('what did you learn?'),
   })
 
-  const topics = response.topics
-
-  if (!topics || topics.length === 0) {
-    console.log(style.muted('No topics added.'))
+  const raw = response.topics
+  if (!raw || !raw.trim()) {
+    console.log(style.dim('no topics added'))
     return
   }
 
+  const topics = raw
+    .split(',')
+    .map((t: string) => t.trim())
+    .filter(Boolean)
   let addedCount = 0
 
-  for (const rawTitle of topics) {
-    const title = rawTitle.trim()
-
-    if (!title) continue
-
+  for (const title of topics) {
     const exists = store.topics.some(
-      (t) =>
-        t.title.toLowerCase().trim() === title.toLowerCase() && !t.completed
+      (t) => t.title.toLowerCase() === title.toLowerCase() && !t.completed
     )
 
     if (exists) {
-      console.log(
-        style.muted(
-          `⚠️  "${title}" already exists and is still active. Skipping.`
-        )
-      )
+      console.log(style.muted(`  ↓ skipped "${title}" (already active)`))
       continue
     }
 
@@ -51,15 +49,15 @@ export async function addCommand(): Promise<void> {
       completed: false,
     })
     addedCount++
+    console.log(style.success(`  + ${title}`))
   }
 
-  if (addedCount === 0) {
-    console.log(style.muted('No new topics added.'))
-    return
+  if (addedCount > 0) {
+    saveStore(store)
+    console.log()
+    console.log(
+      style.dim(`saved ${addedCount} topic${addedCount > 1 ? 's' : ''}`)
+    )
   }
-
-  saveStore(store)
-  console.log(
-    style.success(`✅ ${addedCount} topic${addedCount > 1 ? 's' : ''} saved.`)
-  )
+  console.log()
 }

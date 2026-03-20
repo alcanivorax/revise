@@ -3,38 +3,61 @@ import pkg from '../../package.json' with { type: 'json' }
 import { addCommand } from './add.js'
 import { doneCommand } from './done.js'
 import { todayCommand } from './today.js'
+import { style } from '../core/style.js'
 
 function printHelp(): void {
-  console.log(`
-revise - A CLI to Track what you learned and revise it on fixed spaced-repetition days
-
-Usage:
-  revise [command]
-
-Commands:
-  add                 Add topics learned today
-  done <number>       Mark a revision as completed
-
-Options:
-  -h, --help          Show help
-  -v, --version       Show version
-
-`)
+  console.log()
+  console.log(
+    style.header('revise') +
+      style.dim(' · ') +
+      style.muted('spaced repetition for what you learn')
+  )
+  console.log(style.dim('─'.repeat(40)))
+  console.log()
+  console.log(style.dim('usage:'))
+  console.log(
+    style.title('  revise') +
+      style.muted('              ') +
+      style.dim('show due revisions')
+  )
+  console.log(
+    style.title('  revise add') +
+      style.muted('           ') +
+      style.dim('add new topic')
+  )
+  console.log(
+    style.title('  revise done <n>') +
+      style.muted('      ') +
+      style.dim('mark revision n done')
+  )
+  console.log()
+  console.log(style.dim('options:'))
+  console.log(
+    style.title('  -h, --help') +
+      style.muted('            ') +
+      style.dim('show this help')
+  )
+  console.log(
+    style.title('  -v, --version') +
+      style.muted('         ') +
+      style.dim('show version')
+  )
+  console.log()
 }
 
 function printVersion(): void {
-  console.log(`
-revise version ${pkg.version}
-`)
+  console.log()
+  console.log(style.muted(`v${pkg.version}`))
+  console.log()
 }
 
 function printInvalidOptions(option: string): void {
-  console.error(`
-error: unknown command "${option}"
-
-Run "revise --help" for usage.
-
-`)
+  console.log()
+  console.log(style.overdue(`unknown command: ${option}`))
+  console.log(
+    style.dim('run ') + style.title('revise --help') + style.dim(' for usage')
+  )
+  console.log()
 }
 
 export async function handleCliOptions(): Promise<void> {

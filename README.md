@@ -23,13 +23,15 @@ The terminal reminds you.
 
 <br >
 
-🚀 Install
+## 🚀 Install
 
 ```bash
 npm install -g @alcanivorax/revise
 ```
 
-Or run locally:
+<br>
+
+## Or run locally:
 
 ```bash
 pnpm dev
