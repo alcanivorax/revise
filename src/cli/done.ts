@@ -31,7 +31,7 @@ export function doneCommand(index: number): void {
       style.header('Mark Complete') +
       style.dim(' · ') +
       style.muted(today) +
-      ' '.repeat(23 - today.length) +
+      ' '.repeat(30 - today.length) +
       style.dim(box.lightVertical)
   )
   console.log(
@@ -51,7 +51,7 @@ export function doneCommand(index: number): void {
       style.dim(box.lightVertical) +
         '    ' +
         style.muted('no revisions due today') +
-        ' '.repeat(21) +
+        ' '.repeat(24) +
         style.dim(box.lightVertical)
     )
     console.log(

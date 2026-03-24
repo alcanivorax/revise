@@ -35,6 +35,11 @@ export const box = {
   doubleVertical: '║',
 }
 
+// ✅ ANSI-safe length
+function visibleLength(str: string): number {
+  return str.replace(/\x1b\[[0-9;]*m/g, '').length
+}
+
 function gradientText(text: string): string {
   return brand.primary(text)
 }
@@ -130,43 +135,56 @@ export function createBox(
         ? box.doubleBottomRight
         : box.lightBottomRight
 
+  // ✅ Correct width calculation
   const maxContentWidth = Math.max(
-    ...content.map((line) => line.replace(/\x1b\[[0-9;]*m/g, '').length),
-    title ? title.length + 2 : 0
+    ...content.map((line) => visibleLength(line)),
+    title ? visibleLength(title) + 2 : 0
   )
 
   const boxWidth = Math.min(
-    Math.max(maxContentWidth + padding * 2, title ? title.length + 4 : 0),
+    Math.max(
+      maxContentWidth + padding * 2,
+      title ? visibleLength(title) + 4 : 0
+    ),
     width
   )
 
   const horizontalLine = borderChar.repeat(boxWidth)
-  const paddedContent = content.map(
-    (line) =>
-      verticalChar +
-      ' '.repeat(padding) +
-      line +
-      ' '.repeat(
-        boxWidth - padding - (line.replace(/\x1b\[[0-9;]*m/g, '').length + 1)
-      )
-  )
-
   const lines: string[] = []
 
+  // ✅ Title (proper centering)
   if (title) {
     const paddedTitle = ` ${title} `
-    const titleWidth = paddedTitle.length
+    const titleWidth = visibleLength(paddedTitle)
+
+    const left = Math.floor((boxWidth - titleWidth) / 2)
+    const right = boxWidth - titleWidth - left
 
     lines.push(
       topLeft +
-        horizontalLine.slice(0, Math.floor((boxWidth - titleWidth) / 2)) +
+        borderChar.repeat(left) +
         paddedTitle +
-        horizontalLine.slice(0, Math.ceil((boxWidth - titleWidth) / 2)) +
+        borderChar.repeat(right) +
         topRight
     )
   } else {
     lines.push(topLeft + horizontalLine + topRight)
   }
+
+  // ✅ Proper content alignment
+  const paddedContent = content.map((line) => {
+    const visible = visibleLength(line)
+    const spaceRight = boxWidth - visible - padding * 2
+
+    return (
+      verticalChar +
+      ' '.repeat(padding) +
+      line +
+      ' '.repeat(spaceRight) +
+      ' '.repeat(padding) +
+      verticalChar
+    )
+  })
 
   lines.push(...paddedContent)
   lines.push(bottomLeft + horizontalLine + bottomRight)

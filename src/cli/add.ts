@@ -22,7 +22,7 @@ export async function addCommand(): Promise<void> {
       style.header('Add New Topic') +
       style.dim(' · ') +
       style.muted(today) +
-      ' '.repeat(20 - today.length) +
+      ' '.repeat(29 - today.length) +
       style.dim(box.lightVertical)
   )
   console.log(

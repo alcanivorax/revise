@@ -31,7 +31,7 @@ export function todayCommand(): void {
       style.header("Today's Revisions") +
       style.dim(' · ') +
       style.muted(today) +
-      ' '.repeat(18 - today.length) +
+      ' '.repeat(25 - today.length) +
       style.dim(box.lightVertical)
   )
   console.log(
@@ -40,7 +40,7 @@ export function todayCommand(): void {
       style.dim(box.lightBottomRight)
   )
   console.log(
-    style.dim(box.lightVertical) + ' '.repeat(52) + style.dim(box.lightVertical)
+    style.dim(box.lightVertical) + ' '.repeat(50) + style.dim(box.lightVertical)
   )
 
   if (!due.length) {
@@ -51,12 +51,12 @@ export function todayCommand(): void {
         '  ' +
         style.title('All caught up!') +
         style.dim(' · nothing due today') +
-        ' '.repeat(16) +
+        ' '.repeat(11) +
         style.dim(box.lightVertical)
     )
     console.log(
       style.dim(box.lightVertical) +
-        ' '.repeat(52) +
+        ' '.repeat(50) +
         style.dim(box.lightVertical)
     )
     console.log(
