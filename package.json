@@ -1,6 +1,6 @@
 {
   "name": "@alcanivorax/revise",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A minimal CLI to track what you learned and remind you to revise it on fixed spaced-repetition days",
   "type": "module",
   "bin": {
