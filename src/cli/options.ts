@@ -2,6 +2,7 @@ import { args, index } from './args.js'
 import pkg from '../../package.json' with { type: 'json' }
 import { addCommand } from './add.js'
 import { doneCommand } from './done.js'
+import { listCommand } from './list.js'
 import { todayCommand } from './today.js'
 import { style, box } from '../core/style.js'
 
@@ -10,6 +11,12 @@ function printHelp(): void {
     style.title('  revise') +
       style.muted('             ') +
       style.dim('show due revisions'),
+    style.title('  revise list') +
+      style.muted('         ') +
+      style.dim('show all topics'),
+    style.title('  revise list --upcoming') +
+      style.muted(' ') +
+      style.dim('filter topics'),
     style.title('  revise add') +
       style.muted('          ') +
       style.dim('add new topic'),
@@ -97,6 +104,12 @@ export async function handleCliOptions(): Promise<void> {
 
   if (args.includes('add')) {
     await addCommand()
+    process.exit(0)
+  }
+
+  if (args.includes('list')) {
+    const listIndex = args.indexOf('list')
+    listCommand(args.slice(listIndex + 1))
     process.exit(0)
   }
 

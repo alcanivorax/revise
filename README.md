@@ -1,113 +1,77 @@
 # revise
 
-A minimal CLI to track what you learned and remind you to revise it on fixed spaced-repetition days.
+`revise` is a Node.js CLI for tracking topics and running spaced-repetition reviews.
 
-<br>
-
-## ✨ Why
-
-Learning is easy.
-Remembering is not.
-
-`revise` schedules automatic revisions on:
-
-- Day 3
-
-- Day 7
-
-- Day 21
-
-- Day 45
-
-The terminal reminds you.
-
-<br >
-
-## 🚀 Install
+## Install
 
 ```bash
 npm install -g @alcanivorax/revise
 ```
 
-<br>
-
-## Or run locally:
-
-```bash
-pnpm dev
-```
-
-<br>
-
-## 🧠 Usage
-
-Add topics learned today
-
-```bash
-revise add
-```
-
-Enter topics separated by commas.
-
-<br >
-
-### See revisions due
+## Usage
 
 ```bash
 revise
 ```
 
-<br >
-
-Shows:
-
-- Due today
-
-- Overdue topics (with days late)
-
-<br>
-
-### Mark revision as done
+Shows revisions due today and overdue items.
 
 ```bash
-revise done <number>
+revise add
 ```
 
-Marks the earliest due revision for that topic as completed.
+Prompts for topics (comma-separated) and schedules reviews.
 
-<br >
+```bash
+revise list
+```
 
-### 📂 Data Storage
+Shows all topics and their next review status.
 
-Data is stored locally at:
+```bash
+revise list --upcoming
+```
+
+Available filters: `--all`, `--active`, `--completed`, `--due`, `--overdue`, `--upcoming`.
+
+```bash
+revise done <n>
+```
+
+Marks revision number `n` as completed for the earliest due review of that topic.
+
+```bash
+revise --help
+revise --version
+```
+
+## Schedule
+
+Each topic gets a fixed review schedule from creation date:
+
+- Day 3
+- Day 7
+- Day 21
+- Day 45
+
+## Data
+
+Local storage path:
 
 ```bash
 ~/.revise/data.json
 ```
 
-<br>
+## Local Development
 
-## 🛠 Tech
-
-- Node.js
-
-- TypeScript
-
-- Chalk
-
-- Prompts
-
-- Vitest
-
-<br>
-
-## 🧘 Philosophy
-
-You are allowed to forget.
-The system will remember for you.
-
-<br>
+```bash
+pnpm install
+pnpm dev
+pnpm typecheck
+pnpm test
+pnpm build
+```
 
 ## License
 
-`MIT`
+MIT
