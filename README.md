@@ -49,10 +49,13 @@ revise --version
 
 Each topic gets a fixed review schedule from creation date:
 
+- Day 1
 - Day 3
 - Day 7
-- Day 21
+- Day 14
+- Day 30
 - Day 45
+- Day 90
 
 ## Data
 
