@@ -38,7 +38,9 @@ function visibleLength(str: string): number {
 function boxLine(content = ''): string {
   const visible = visibleLength(content)
   const padded =
-    visible >= INNER_WIDTH ? content : content + ' '.repeat(INNER_WIDTH - visible)
+    visible >= INNER_WIDTH
+      ? content
+      : content + ' '.repeat(INNER_WIDTH - visible)
   return style.dim(box.lightVertical) + padded + style.dim(box.lightVertical)
 }
 
@@ -121,7 +123,9 @@ export function listCommand(flags: string[] = []): void {
       boxLine(
         '  ' +
           style.overdue(`invalid filter: ${invalid.join(', ')}`) +
-          style.dim(' · use --all|--active|--completed|--due|--overdue|--upcoming')
+          style.dim(
+            ' · use --all|--active|--completed|--due|--overdue|--upcoming'
+          )
       )
     )
     console.log(boxLine())
@@ -133,7 +137,9 @@ export function listCommand(flags: string[] = []): void {
   const filters = requested.length ? new Set(requested) : new Set(['--all'])
   if (store.topics.length === 0) {
     console.log(
-      boxLine('  ' + style.muted('no topics yet') + style.dim(' · run revise add'))
+      boxLine(
+        '  ' + style.muted('no topics yet') + style.dim(' · run revise add')
+      )
     )
     console.log(boxLine())
     console.log(boxBottom())
