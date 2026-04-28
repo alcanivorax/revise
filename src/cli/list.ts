@@ -1,6 +1,13 @@
 import { daysBetween, isDue, todayISO } from '../core/dates.js'
 import { loadStore } from '../core/storage.js'
-import { style, box } from '../core/style.js'
+import { style } from '../core/style.js'
+import {
+  boxBottom as renderBoxBottom,
+  boxDivider as renderBoxDivider,
+  boxLine as renderBoxLine,
+  boxTop as renderBoxTop,
+  wrapText,
+} from './layout.js'
 
 const INNER_WIDTH = 64
 const VALID_FILTERS = new Set([
@@ -14,92 +21,20 @@ const VALID_FILTERS = new Set([
 
 type TopicStatus = 'completed' | 'due' | 'overdue' | 'upcoming'
 
-function visibleLength(str: string): number {
-  const plain = str.replace(/\x1b\[[0-9;]*m/g, '')
-  let width = 0
-
-  for (const char of plain) {
-    if (/[\p{Mark}\u200d\ufe00-\ufe0f]/u.test(char)) continue
-    if (
-      /\p{Extended_Pictographic}/u.test(char) ||
-      /[\u1100-\u115f\u2e80-\u303e\u3040-\ua4cf\uac00-\ud7a3\uf900-\ufaff\ufe10-\ufe6f\uff00-\uff60\uffe0-\uffe6]/u.test(
-        char
-      )
-    ) {
-      width += 2
-      continue
-    }
-    width += 1
-  }
-
-  return width
-}
-
 function boxLine(content = ''): string {
-  const visible = visibleLength(content)
-  const padded =
-    visible >= INNER_WIDTH
-      ? content
-      : content + ' '.repeat(INNER_WIDTH - visible)
-  return style.dim(box.lightVertical) + padded + style.dim(box.lightVertical)
+  return renderBoxLine(content, INNER_WIDTH)
 }
 
 function boxTop(): string {
-  return (
-    style.dim(box.lightTopLeft) +
-    box.lightHorizontal.repeat(INNER_WIDTH) +
-    style.dim(box.lightTopRight)
-  )
+  return renderBoxTop(INNER_WIDTH)
 }
 
 function boxBottom(): string {
-  return (
-    style.dim(box.lightBottomLeft) +
-    box.lightHorizontal.repeat(INNER_WIDTH) +
-    style.dim(box.lightBottomRight)
-  )
+  return renderBoxBottom(INNER_WIDTH)
 }
 
-function wrapText(text: string, width: number): string[] {
-  if (width <= 0) return ['']
-  if (!text.trim()) return ['']
-
-  const words = text.trim().split(/\s+/)
-  const lines: string[] = []
-  let current = ''
-
-  for (const word of words) {
-    if (!current.length) {
-      if (word.length <= width) {
-        current = word
-      } else {
-        for (let i = 0; i < word.length; i += width) {
-          lines.push(word.slice(i, i + width))
-        }
-      }
-      continue
-    }
-
-    if (current.length + 1 + word.length <= width) {
-      current += ` ${word}`
-      continue
-    }
-
-    lines.push(current)
-    if (word.length <= width) {
-      current = word
-    } else {
-      current = ''
-      for (let i = 0; i < word.length; i += width) {
-        const chunk = word.slice(i, i + width)
-        if (chunk.length === width) lines.push(chunk)
-        else current = chunk
-      }
-    }
-  }
-
-  if (current.length) lines.push(current)
-  return lines.length ? lines : ['']
+function boxDivider(): string {
+  return renderBoxDivider(INNER_WIDTH)
 }
 
 export function listCommand(flags: string[] = []): void {
@@ -115,7 +50,7 @@ export function listCommand(flags: string[] = []): void {
       '  ' + style.header('All Topics') + style.dim(' · ') + style.muted(today)
     )
   )
-  console.log(boxBottom())
+  console.log(boxDivider())
   console.log(boxLine())
 
   if (invalid.length) {

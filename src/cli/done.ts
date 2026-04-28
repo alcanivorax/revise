@@ -1,6 +1,15 @@
 import { todayISO, isDue } from '../core/dates.js'
 import { loadStore, saveStore } from '../core/storage.js'
-import { style, box } from '../core/style.js'
+import { style } from '../core/style.js'
+import {
+  boxBottom,
+  boxLine,
+  boxTop,
+  visibleLength,
+  wrapText,
+} from './layout.js'
+
+const INNER_WIDTH = 50
 
 export function doneCommand(index: number): void {
   const store = loadStore()
@@ -18,132 +27,88 @@ export function doneCommand(index: number): void {
   }
 
   console.log()
+  console.log(boxTop())
   console.log(
-    style.dim(box.lightTopLeft) +
-      box.lightHorizontal.repeat(50) +
-      style.dim(box.lightTopRight)
-  )
-  console.log(
-    style.dim(box.lightVertical) +
+    boxLine(
       '  ' +
-      style.icon.check +
-      ' ' +
-      style.header('Mark Complete') +
-      style.dim(' · ') +
-      style.muted(today) +
-      ' '.repeat(30 - today.length) +
-      style.dim(box.lightVertical)
+        style.icon.check +
+        ' ' +
+        style.header('Mark Complete') +
+        style.dim(' · ') +
+        style.muted(today)
+    )
   )
-  console.log(
-    style.dim(box.lightBottomLeft) +
-      box.lightHorizontal.repeat(50) +
-      style.dim(box.lightBottomRight)
-  )
+  console.log(boxBottom())
   console.log()
 
   if (!due.length) {
-    console.log(
-      style.dim(box.lightTopLeft) +
-        box.lightHorizontal.repeat(50) +
-        style.dim(box.lightTopRight)
-    )
-    console.log(
-      style.dim(box.lightVertical) +
-        '    ' +
-        style.muted('no revisions due today') +
-        ' '.repeat(24) +
-        style.dim(box.lightVertical)
-    )
-    console.log(
-      style.dim(box.lightBottomLeft) +
-        box.lightHorizontal.repeat(50) +
-        style.dim(box.lightBottomRight)
-    )
+    console.log(boxTop())
+    console.log(boxLine('    ' + style.muted('no revisions due today')))
+    console.log(boxBottom())
     console.log()
     return
   }
 
   if (index < 1 || index > due.length) {
+    console.log(boxTop())
     console.log(
-      style.dim(box.lightTopLeft) +
-        box.lightHorizontal.repeat(50) +
-        style.dim(box.lightTopRight)
+      boxLine('    ' + style.overdue(`invalid index (choose 1-${due.length})`))
     )
-    console.log(
-      style.dim(box.lightVertical) +
-        '    ' +
-        style.overdue(`invalid index (choose 1-${due.length})`) +
-        ' '.repeat(14) +
-        style.dim(box.lightVertical)
-    )
-    console.log(
-      style.dim(box.lightBottomLeft) +
-        box.lightHorizontal.repeat(50) +
-        style.dim(box.lightBottomRight)
-    )
+    console.log(boxBottom())
     console.log()
     return
   }
 
   const selected = due[index - 1]
+  const completedBefore = selected.topic.completed
   selected.revision.done = true
+  selected.revision.completedOn = today
 
   const remaining = selected.topic.schedule.some((r) => !r.done)
   if (!remaining) {
     selected.topic.completed = true
   }
 
+  store.history ??= []
+  store.history.push({
+    type: 'done',
+    topicId: selected.topic.id,
+    revisionDay: selected.revision.day,
+    completedBefore,
+    date: today,
+  })
+
   saveStore(store)
 
+  console.log(boxTop())
+  const titlePrefix = '    ' + style.success(style.icon.check) + ' '
+  const continuationPrefix = ' '.repeat(6)
+  const titleWidth = INNER_WIDTH - visibleLength(continuationPrefix)
+  const titleLines = wrapText(selected.topic.title, titleWidth)
+
+  titleLines.forEach((line, lineIndex) => {
+    const prefix = lineIndex === 0 ? titlePrefix : continuationPrefix
+    console.log(boxLine(prefix + style.title(line)))
+  })
+
   console.log(
-    style.dim(box.lightTopLeft) +
-      box.lightHorizontal.repeat(50) +
-      style.dim(box.lightTopRight)
+    boxLine('    ' + style.dim('day ' + selected.revision.day + ' complete'))
   )
-  console.log(
-    style.dim(box.lightVertical) +
-      '    ' +
-      style.success(style.icon.check) +
-      ' ' +
-      style.title(selected.topic.title) +
-      ' '.repeat(Math.max(0, 30 - selected.topic.title.length)) +
-      style.dim(box.lightVertical)
-  )
-  console.log(
-    style.dim(box.lightVertical) +
-      '    ' +
-      style.dim('day ' + selected.revision.day + ' complete') +
-      ' '.repeat(24) +
-      style.dim(box.lightVertical)
-  )
-  console.log(
-    style.dim(box.lightBottomLeft) +
-      box.lightHorizontal.repeat(50) +
-      style.dim(box.lightBottomRight)
-  )
+  console.log(boxBottom())
   console.log()
 
   if (selected.topic.completed) {
+    console.log(boxTop())
     console.log(
-      style.dim(box.lightTopLeft) +
-        box.lightHorizontal.repeat(50) +
-        style.dim(box.lightTopRight)
-    )
-    console.log(
-      style.dim(box.lightVertical) +
+      boxLine(
         '  ' +
-        style.icon.trophy +
-        ' ' +
-        style.title('Topic Complete!') +
-        style.dim(' · great work!') +
-        ' '.repeat(21) +
-        style.dim(box.lightVertical)
+          style.icon.trophy +
+          ' ' +
+          style.title('Topic Complete!') +
+          style.dim(' · great work!')
+      )
     )
-    console.log(
-      style.dim(box.lightBottomLeft) +
-        box.lightHorizontal.repeat(50) +
-        style.dim(box.lightBottomRight)
-    )
+    console.log(boxBottom())
     console.log()
   }
 }

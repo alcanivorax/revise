@@ -2,34 +2,34 @@ import prompts from 'prompts'
 import { todayISO } from '../core/dates.js'
 import { createSchedule } from '../core/scheduler.js'
 import { loadStore, saveStore } from '../core/storage.js'
-import { style, box } from '../core/style.js'
+import { style } from '../core/style.js'
+import {
+  boxBottom,
+  boxLine,
+  boxTop,
+  visibleLength,
+  wrapText,
+} from './layout.js'
+
+const INNER_WIDTH = 50
 
 export async function addCommand(): Promise<void> {
   const store = loadStore()
   const today = todayISO()
 
   console.log()
+  console.log(boxTop())
   console.log(
-    style.dim(box.lightTopLeft) +
-      box.lightHorizontal.repeat(50) +
-      style.dim(box.lightTopRight)
-  )
-  console.log(
-    style.dim(box.lightVertical) +
+    boxLine(
       '  ' +
-      style.icon.rocket +
-      ' ' +
-      style.header('Add New Topic') +
-      style.dim(' · ') +
-      style.muted(today) +
-      ' '.repeat(29 - today.length) +
-      style.dim(box.lightVertical)
+        style.icon.rocket +
+        ' ' +
+        style.header('Add New Topic') +
+        style.dim(' · ') +
+        style.muted(today)
+    )
   )
-  console.log(
-    style.dim(box.lightBottomLeft) +
-      box.lightHorizontal.repeat(50) +
-      style.dim(box.lightBottomRight)
-  )
+  console.log(boxBottom())
   console.log()
 
   const response = await prompts({
@@ -76,42 +76,36 @@ export async function addCommand(): Promise<void> {
   }
 
   if (added.length > 0) {
-    console.log(
-      style.dim(box.lightTopLeft) +
-        box.lightHorizontal.repeat(50) +
-        style.dim(box.lightTopRight)
-    )
+    console.log(boxTop())
     for (const title of added) {
-      const pad = ' '.repeat(Math.max(0, 46 - title.length))
-      console.log(
-        style.dim(box.lightVertical) +
-          '  ' +
-          style.success(style.icon.check) +
-          ' ' +
-          style.title(title) +
-          pad +
-          style.dim(box.lightVertical)
-      )
-    }
-    if (skipped.length > 0) {
-      for (const title of skipped) {
-        const pad = ' '.repeat(Math.max(0, 46 - title.length))
+      const prefix = '  ' + style.success(style.icon.check) + ' '
+      const continuationPrefix = ' '.repeat(4)
+      const titleWidth = INNER_WIDTH - visibleLength(continuationPrefix)
+
+      for (const [lineIndex, line] of wrapText(title, titleWidth).entries()) {
         console.log(
-          style.dim(box.lightVertical) +
-            '  ' +
-            style.muted('↓') +
-            ' ' +
-            style.dim(title) +
-            pad +
-            style.dim(box.lightVertical)
+          boxLine(
+            (lineIndex === 0 ? prefix : continuationPrefix) + style.title(line)
+          )
         )
       }
     }
-    console.log(
-      style.dim(box.lightBottomLeft) +
-        box.lightHorizontal.repeat(50) +
-        style.dim(box.lightBottomRight)
-    )
+    if (skipped.length > 0) {
+      for (const title of skipped) {
+        const prefix = '  ' + style.muted('↓') + ' '
+        const continuationPrefix = ' '.repeat(4)
+        const titleWidth = INNER_WIDTH - visibleLength(continuationPrefix)
+
+        for (const [lineIndex, line] of wrapText(title, titleWidth).entries()) {
+          console.log(
+            boxLine(
+              (lineIndex === 0 ? prefix : continuationPrefix) + style.dim(line)
+            )
+          )
+        }
+      }
+    }
+    console.log(boxBottom())
     saveStore(store)
     console.log()
     console.log(
@@ -122,28 +116,21 @@ export async function addCommand(): Promise<void> {
           : '')
     )
   } else if (skipped.length > 0) {
-    console.log(
-      style.dim(box.lightTopLeft) +
-        box.lightHorizontal.repeat(50) +
-        style.dim(box.lightTopRight)
-    )
+    console.log(boxTop())
     for (const title of skipped) {
-      const pad = ' '.repeat(Math.max(0, 46 - title.length))
-      console.log(
-        style.dim(box.lightVertical) +
-          '  ' +
-          style.muted('↓') +
-          ' ' +
-          style.dim(title) +
-          pad +
-          style.dim(box.lightVertical)
-      )
+      const prefix = '  ' + style.muted('↓') + ' '
+      const continuationPrefix = ' '.repeat(4)
+      const titleWidth = INNER_WIDTH - visibleLength(continuationPrefix)
+
+      for (const [lineIndex, line] of wrapText(title, titleWidth).entries()) {
+        console.log(
+          boxLine(
+            (lineIndex === 0 ? prefix : continuationPrefix) + style.dim(line)
+          )
+        )
+      }
     }
-    console.log(
-      style.dim(box.lightBottomLeft) +
-        box.lightHorizontal.repeat(50) +
-        style.dim(box.lightBottomRight)
-    )
+    console.log(boxBottom())
     console.log()
     console.log(style.muted('  all topics already exist'))
   }

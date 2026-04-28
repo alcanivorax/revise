@@ -1,11 +1,30 @@
 import chalk from 'chalk'
 
-const dim = chalk.gray
-const muted = chalk.gray
+const palette = {
+  ink: '#e7e5df',
+  muted: '#9ca3a3',
+  dim: '#6f7775',
+  border: '#3b4442',
+  line: '#6d7f78',
+  sage: '#9bb89f',
+  moss: '#7f9f86',
+  clay: '#c89f7a',
+  amber: '#d4b26a',
+  rose: '#c98787',
+  blue: '#8fa7b3',
+  lavender: '#a79abf',
+  surface: '#1f2423',
+}
+
+const dim = chalk.hex(palette.dim)
+const muted = chalk.hex(palette.muted)
 
 const brand = {
-  primary: chalk.hex('#06b6d4'),
-  secondary: chalk.hex('#8b5cf6'),
+  primary: chalk.hex(palette.sage),
+  secondary: chalk.hex(palette.lavender),
+  border: chalk.hex(palette.border),
+  line: chalk.hex(palette.line),
+  surface: chalk.hex(palette.surface),
 }
 
 export const box = {
@@ -15,6 +34,8 @@ export const box = {
   bottomRight: '╯',
   horizontal: '─',
   vertical: '│',
+  leftT: '├',
+  rightT: '┤',
   lightTopLeft: '┌',
   lightTopRight: '┐',
   lightBottomLeft: '└',
@@ -49,28 +70,31 @@ function heading(text: string): string {
 }
 
 export const style = {
-  border: dim,
+  border: brand.border,
   header: heading,
-  title: chalk.white.bold,
-  topic: chalk.white,
+  title: chalk.hex(palette.ink).bold,
+  topic: chalk.hex(palette.ink),
   index: brand.primary,
-  dueToday: chalk.hex('#f59e0b'),
-  overdue: chalk.hex('#ef4444'),
-  success: chalk.hex('#10b981'),
+  dueToday: chalk.hex(palette.amber).bold,
+  overdue: chalk.hex(palette.rose).bold,
+  success: chalk.hex(palette.moss).bold,
   muted: muted,
-  accent: brand.primary,
+  accent: brand.line,
   dim: dim,
   gradient: gradientText,
-  info: chalk.hex('#3b82f6'),
+  info: chalk.hex(palette.blue).bold,
+  label: (text: string) => brand.secondary.bold(text.toUpperCase()),
+  pill: (text: string) =>
+    chalk.hex(palette.ink).bgHex(palette.surface)(` ${text} `),
   icon: {
-    check: chalk.green('✓'),
-    cross: chalk.red('✗'),
+    check: chalk.hex(palette.moss)('✓'),
+    cross: chalk.hex(palette.rose)('✗'),
     bullet: brand.primary('•'),
-    arrow: brand.primary('›'),
-    star: chalk.yellow('★'),
+    arrow: chalk.hex(palette.clay)('›'),
+    star: chalk.hex(palette.amber)('★'),
     calendar: brand.secondary('◷'),
-    clock: brand.primary('◰'),
-    sparkles: '✨',
+    clock: chalk.hex(palette.blue)('◰'),
+    sparkles: brand.secondary('✦'),
     rocket: '🚀',
     trophy: '🏆',
   },

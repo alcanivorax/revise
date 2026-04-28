@@ -15,7 +15,9 @@ export function loadStore(): Store {
     fs.writeFileSync(__filename, JSON.stringify({ topics: [] }, null, 2))
   }
 
-  return JSON.parse(fs.readFileSync(__filename, 'utf-8'))
+  const store = JSON.parse(fs.readFileSync(__filename, 'utf-8')) as Store
+  store.history ??= []
+  return store
 }
 
 export function saveStore(store: Store) {

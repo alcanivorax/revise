@@ -2,36 +2,43 @@ import { args, index } from './args.js'
 import pkg from '../../package.json' with { type: 'json' }
 import { addCommand } from './add.js'
 import { doneCommand } from './done.js'
+import { editCommand } from './edit.js'
 import { listCommand } from './list.js'
+import { postponeCommand } from './postpone.js'
+import { removeCommand } from './remove.js'
+import { resetCommand } from './reset.js'
+import { statsCommand } from './stats.js'
 import { todayCommand } from './today.js'
-import { style, box } from '../core/style.js'
+import { undoCommand } from './undo.js'
+import { style } from '../core/style.js'
+import { boxBottom, boxLine, boxTop } from './layout.js'
+
+const HELP_WIDTH = 58
+const HELP_COMMAND_WIDTH = 30
+
+function helpRow(command: string, description: string): string {
+  const gap = ' '.repeat(Math.max(1, HELP_COMMAND_WIDTH - command.length))
+  return style.title(`  ${command}`) + style.muted(gap) + style.dim(description)
+}
 
 function printHelp(): void {
   const lines = [
-    style.title('  revise') +
-      style.muted('             ') +
-      style.dim('show due revisions'),
-    style.title('  revise list') +
-      style.muted('         ') +
-      style.dim('show all topics'),
-    style.title('  revise list --upcoming') +
-      style.muted(' ') +
-      style.dim('filter topics'),
-    style.title('  revise add') +
-      style.muted('          ') +
-      style.dim('add new topic'),
-    style.title('  revise done <n>') +
-      style.muted('       ') +
-      style.dim('mark revision n done'),
+    helpRow('revise', 'show due revisions'),
+    helpRow('revise list', 'show all topics'),
+    helpRow('revise list --upcoming', 'filter topics'),
+    helpRow('revise add', 'add new topic'),
+    helpRow('revise done <n>', 'mark revision n done'),
+    helpRow('revise undo', 'undo last done action'),
+    helpRow('revise postpone <n> [days]', 'postpone due revision'),
+    helpRow('revise edit <n>', 'rename a topic'),
+    helpRow('revise remove <n>', 'delete a topic'),
+    helpRow('revise reset <n>', 'restart a topic schedule'),
+    helpRow('revise stats', 'show progress summary'),
   ]
 
   const optionLines = [
-    style.title('  -h, --help') +
-      style.muted('         ') +
-      style.dim('show this help'),
-    style.title('  -v, --version') +
-      style.muted('      ') +
-      style.dim('show version'),
+    helpRow('-h, --help', 'show this help'),
+    helpRow('-v, --version', 'show version'),
   ]
 
   const helpContent = [
@@ -50,30 +57,12 @@ function printHelp(): void {
     ),
   ]
 
-  const border = box.doubleHorizontal
-  const width = 56
-
   console.log()
-  console.log(
-    style.dim(box.doubleTopLeft) +
-      border.repeat(width) +
-      style.dim(box.doubleTopRight)
-  )
+  console.log(boxTop(HELP_WIDTH))
   for (const line of helpContent) {
-    const padding = width - line.replace(/\x1b\[[0-9;]*m/g, '').length
-    console.log(
-      style.dim(box.doubleVertical) +
-        ' ' +
-        line +
-        (padding > 1 ? ' '.repeat(padding - 1) : '') +
-        style.dim(box.doubleVertical)
-    )
+    console.log(boxLine(' ' + line, HELP_WIDTH))
   }
-  console.log(
-    style.dim(box.doubleBottomLeft) +
-      border.repeat(width) +
-      style.dim(box.doubleBottomRight)
-  )
+  console.log(boxBottom(HELP_WIDTH))
   console.log()
 }
 
@@ -115,6 +104,36 @@ export async function handleCliOptions(): Promise<void> {
 
   if (args.includes('done')) {
     doneCommand(index)
+    process.exit(0)
+  }
+
+  if (args.includes('undo')) {
+    undoCommand()
+    process.exit(0)
+  }
+
+  if (args.includes('postpone')) {
+    postponeCommand(index, Number(args[2]))
+    process.exit(0)
+  }
+
+  if (args.includes('edit')) {
+    await editCommand(index)
+    process.exit(0)
+  }
+
+  if (args.includes('remove')) {
+    await removeCommand(index)
+    process.exit(0)
+  }
+
+  if (args.includes('reset')) {
+    await resetCommand(index)
+    process.exit(0)
+  }
+
+  if (args.includes('stats')) {
+    statsCommand()
     process.exit(0)
   }
 

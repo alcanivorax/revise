@@ -38,7 +38,44 @@ Available filters: `--all`, `--active`, `--completed`, `--due`, `--overdue`, `--
 revise done <n>
 ```
 
-Marks revision number `n` as completed for the earliest due review of that topic.
+Marks due revision `n` as completed.
+
+```bash
+revise undo
+```
+
+Reverses the last `revise done <n>` action.
+
+```bash
+revise postpone <n>
+revise postpone <n> 3
+```
+
+Moves due revision `n` forward. Defaults to 1 day; pass a number to choose the delay.
+
+```bash
+revise edit <n>
+```
+
+Renames topic `n`.
+
+```bash
+revise remove <n>
+```
+
+Deletes topic `n` after confirmation.
+
+```bash
+revise reset <n>
+```
+
+Restarts topic `n` from today with a fresh review schedule.
+
+```bash
+revise stats
+```
+
+Shows active topics, completed topics, due/overdue counts, completed revisions, and the current completion streak.
 
 ```bash
 revise --help
@@ -64,6 +101,8 @@ Local storage path:
 ```bash
 ~/.revise/data.json
 ```
+
+The data file stores topics, schedules, completion state, and a small history of completed revisions for `revise undo` and `revise stats`.
 
 ## Local Development
 
